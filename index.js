@@ -134,7 +134,7 @@ app.post('/submitUser', async (req, res) => {
         const validationResult = schema.validate({ name, password });
         if (validationResult.error != null) {
             console.log(validationResult.error);
-            res.redirect("/createUser");
+            res.redirect("/signup");
             return;
         }
 
@@ -142,9 +142,11 @@ app.post('/submitUser', async (req, res) => {
 
         await userCollection.insertOne({ name: name, password: hashedPassword });
         console.log("Inserted user");
+        req.session.authenticated = true;
+        req.session.name = name;
+        req.session.cookie.maxAge = expireTime;
 
-        var html = "successfully created user";
-        res.send(html);
+        res.redirect("/members");
     }
 });
 
@@ -247,10 +249,7 @@ app.get('/members', (req, res) => {
 
 app.get('/logout', (req, res) => {
     req.session.destroy();
-    var html = `
-    You are logged out.
-    `;
-    res.send(html);
+    res.redirect("/");
 });
 
 app.use(express.static(__dirname + "/public"));
