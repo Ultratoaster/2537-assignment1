@@ -75,6 +75,7 @@ app.get('/signup', (req, res) => {
     var missingName = req.query.name;
     var missingPass = req.query.pass;
     var missingEmail = req.query.email;
+    var nameTaken = req.query.taken;
 
     var html = `
         create user<br>
@@ -87,6 +88,9 @@ app.get('/signup', (req, res) => {
     `;
     if (missingName) {
         html += "<br> name is required";
+    }
+    if (nameTaken) {
+        html += "<br> name already taken";
     }
     if (missingPass) {
         html += "<br> password is required";
@@ -104,9 +108,15 @@ app.post('/submitUser', async (req, res) => {
     var email = req.body.email;
     var redirectString = '/signup?';
     var redirectFlag = 0;
+    var result = await userCollection.find({ name: name })
 
     if (!name) {
         redirectString += '&name=1'
+        redirectFlag = 1;
+    }
+
+    if(result == true) {
+        redirectString += '&taken=1'
         redirectFlag = 1;
     }
 
@@ -176,7 +186,8 @@ app.post('/loggingin', async (req, res) => {
     }
 
     const result = await userCollection.find({ name: name }).project({ name: 1, password: 1, _id: 1 }).toArray();
-
+    const userName = await userCollection.find({name: name});
+    console.log("Username" + userName);
     console.log(result);
     if (result.length != 1) {
         html += "no such user<br> <a href='./login'>return</a>";
