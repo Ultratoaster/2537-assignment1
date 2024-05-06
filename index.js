@@ -31,11 +31,11 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 
 /* END secret section */
 
-var {database} = include('databaseConnection');
+var { database } = include('databaseConnection');
 
 const userCollection = database.db(mongodb_database).collection('users');
 
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
@@ -56,12 +56,12 @@ app.get('/', (req, res) => {
     var html = '';
 
     if (!req.session.authenticated) {
-        html +=`
+        html += `
         <button onclick="location.href='/signup';">Sign Up</button><br>
         <button onclick="location.href='/login';">Login</button><br>
         `;
     } else {
-        html +=`Hello, ` + req.session.name + `<br>
+        html += `Hello, ` + req.session.name + `<br>
         <button onclick="location.href='/members';">Go to Members Area</button><br>
         <button onclick="location.href='/logout';">Logout</button><br>
         `
@@ -166,38 +166,38 @@ app.post('/loggingin', async (req, res) => {
     var html = '';
 
     const schema = Joi.string().max(20).required();
-	const validationResult = schema.validate(name);
-	if (validationResult.error != null) {
-	   console.log(validationResult.error);
-	   res.redirect("/login");
-	   return;
-	}
+    const validationResult = schema.validate(name);
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/login");
+        return;
+    }
 
-	const result = await userCollection.find({name: name}).project({name: 1, password: 1, _id: 1}).toArray();
+    const result = await userCollection.find({ name: name }).project({ name: 1, password: 1, _id: 1 }).toArray();
 
-	console.log(result);
-	if (result.length != 1) {
+    console.log(result);
+    if (result.length != 1) {
         html += "no such user<br> <a href='./login'>return</a>";
-		console.log("user not found");
-		res.send(html);
-		return;
-	}
-	if (await bcrypt.compare(password, result[0].password)) {
-		console.log("correct password");
-		req.session.authenticated = true;
-		req.session.name = name;
-		req.session.cookie.maxAge = expireTime;
+        console.log("user not found");
+        res.send(html);
+        return;
+    }
+    if (await bcrypt.compare(password, result[0].password)) {
+        console.log("correct password");
+        req.session.authenticated = true;
+        req.session.name = name;
+        req.session.cookie.maxAge = expireTime;
 
-		res.redirect('/loggedIn');
-		return;
-	}
-	else {
-		console.log("incorrect password");
-		html += "invalid name/password combination<br> <a href='./login'>return</a>";
-		console.log("invalid combo");
-		res.send(html);
-		return;
-	}
+        res.redirect('/loggedIn');
+        return;
+    }
+    else {
+        console.log("incorrect password");
+        html += "invalid name/password combination<br> <a href='./login'>return</a>";
+        console.log("invalid combo");
+        res.send(html);
+        return;
+    }
 });
 
 app.get('/loggedin', (req, res) => {
@@ -212,15 +212,41 @@ app.get('/loggedin', (req, res) => {
     }
 });
 
-app.get('/members', (req, res) => {
-    var html = `Howdy, ` + req.session.name + `<br>`;
+app.get('/members', (req, res) => {    
 
-    res.send(html);
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    var randVal = getRandomInt(0,2);
+    
+    if (!req.session.authenticated) {
+        res.redirect('/login');
+    } else {
+        var html = `
+    Howdy, ` + req.session.name + `<br>
+    `;
+        if (randVal == 0) {
+            html+="<img src='/0.gif' style='width:250px;'><br>";
+        }
+        else if (randVal == 1) {
+            html+="<img src='/1.gif' style='width:250px;'><br>";
+        }
+        else {
+            html+="<img src='/2.gif' style='width:250px;'><br>";
+        }
+
+        html += `<button onclick="location.href='/logout';">Logout</button><br>
+    `;
+        res.send(html);
+    }
 
 })
 
-app.get('/logout', (req,res) => {
-	req.session.destroy();
+app.get('/logout', (req, res) => {
+    req.session.destroy();
     var html = `
     You are logged out.
     `;
