@@ -1,0 +1,19 @@
+{
+  "name": "assignment-1-ultratoaster",
+  "version": "1.0.0",
+  "description": "For this assignment you will be creating a simple website using Node.js. You will also be creating and\r connecting to a MongoDB database to store the users with their names, emails and passwords. You will\r create a publicly accessible MongoDB database using Atlas (at: https://www.mongodb.com/atlas).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "connect-mongo": "^4.6.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "joi": "^17.8.4"
+  }
+}
