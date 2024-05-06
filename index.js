@@ -13,9 +13,6 @@ const Joi = require("joi");
 
 const expireTime = 1 * 60 * 60 * 1000; //expires after 1 day  (hours * minutes * seconds * millis)
 
-//Users and Passwords (in memory 'database')
-var users = [];
-
 app.use(express.urlencoded({ extended: false }));
 
 const port = process.env.PORT || 3000;
