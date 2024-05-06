@@ -138,10 +138,11 @@ app.post('/submitUser', async (req, res) => {
         const schema = Joi.object(
             {
                 name: Joi.string().alphanum().max(20).required(),
-                password: Joi.string().max(20).required()
+                password: Joi.string().max(20).required(),
+                email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
             });
 
-        const validationResult = schema.validate({ name, password });
+        const validationResult = schema.validate({ name, password, email });
         if (validationResult.error != null) {
             console.log(validationResult.error);
             res.redirect("/signup");
@@ -150,7 +151,7 @@ app.post('/submitUser', async (req, res) => {
 
         var hashedPassword = await bcrypt.hashSync(password, saltRounds);
 
-        await userCollection.insertOne({ name: name, password: hashedPassword });
+        await userCollection.insertOne({ name: name, email: email, password: hashedPassword });
         console.log("Inserted user");
         req.session.authenticated = true;
         req.session.name = name;
