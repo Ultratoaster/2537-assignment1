@@ -6,7 +6,7 @@ Student Set: D
     ========
 [x]  A home page links to signup and login, if not logged in; and links to members and signout, if logged in.
 [x]  A members page that displays 1 of 3 random images stored on the server.
-[]  The members page will redirect to the home page if no valid session is found.
+[x]  The members page will redirect to the home page if no valid session is found.
 [x]  The signout buttons end the session.
 [x]  All secrets, encryption keys, database passwords are stored in a .env file.
 
