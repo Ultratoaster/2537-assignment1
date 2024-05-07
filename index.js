@@ -44,7 +44,7 @@ var mongoStore = MongoStore.create({
 app.use(session({
     secret: node_session_secret,
     store: mongoStore,
-    saveUnintialized: false,
+    saveUninitialized: false,
     resave: true
 }
 ));
