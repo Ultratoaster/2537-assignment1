@@ -234,7 +234,7 @@ app.get('/members', (req, res) => {
     var randVal = getRandomInt(0,2);
     
     if (!req.session.authenticated) {
-        res.redirect('/login');
+        res.redirect('/');
     } else {
         var html = `
     Howdy, ` + req.session.name + `<br>
